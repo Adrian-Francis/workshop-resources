@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Work smarter with Google Gemini | Tech Mahindra | Using Technology Better</title>
+<meta name="description" content="Tips, prompts and guardrails for working smarter with Gemini in Google Workspace.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FBFBFD; --tile:#FFFFFF; --soft:#F5F5F7; --ink:#0D2137; --body-ink:#2D3F56; --muted:#5A6B80;
+  --line:#E8EAF0; --cyan:#00C8DC; --link:#00808D; --on-cyan:#0D2137; --band:#0D2137; --band-ink:#FBFBFD;
+  --t1:oklch(0.97 0.02 25); --t1-line:#F3CFCB; --t1-ink:#B4413A;
+  --t2:oklch(0.97 0.025 210); --t2-line:#A9E6EE; --t2-ink:#0E7C86;
+  --t3:oklch(0.97 0.03 150); --t3-line:#B9E6C6; --t3-ink:#2F7D45;
+  --font:"Poppins", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1A2C; --tile:#12263D; --soft:#16304B; --ink:#EEF3F8; --body-ink:#C9D4E0; --muted:#94A6BA;
+    --line:#223B57; --link:#4FDDEB; --band:#060F1A;
+    --t1:#2A1E26; --t1-line:#553440; --t1-ink:#F2A49C;
+    --t2:#0F2C38; --t2-line:#1D5664; --t2-ink:#6FE3EF;
+    --t3:#132C23; --t3-line:#28553F; --t3-ink:#86D9A0;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1A2C; --tile:#12263D; --soft:#16304B; --ink:#EEF3F8; --body-ink:#C9D4E0; --muted:#94A6BA;
+  --line:#223B57; --link:#4FDDEB; --band:#060F1A;
+  --t1:#2A1E26; --t1-line:#553440; --t1-ink:#F2A49C;
+  --t2:#0F2C38; --t2-line:#1D5664; --t2-ink:#6FE3EF;
+  --t3:#132C23; --t3-line:#28553F; --t3-ink:#86D9A0;
+}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 5rem);scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important}}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.5;letter-spacing:-.01em}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+:focus-visible{outline:3px solid var(--cyan);outline-offset:3px;border-radius:6px}
+
+.preview{background:#060F1A;color:#FBFBFD;font-size:13px}
+.preview .wrap{display:flex;flex-wrap:wrap;gap:.5rem 1.25rem;align-items:center;padding-top:.5rem;padding-bottom:.5rem}
+.preview label{max-width:100%;min-width:0;display:flex;gap:.5rem;align-items:center}
+.preview select{max-width:100%;min-width:0;font:inherit;padding:.3rem .6rem;border-radius:980px;border:0;background:#FBFBFD;color:#0D2137}
+.preview p{margin:0;opacity:.7}
+
+.wrap{max-width:1216px;margin:0 auto;padding-left:clamp(1.25rem,4vw,2rem);padding-right:clamp(1.25rem,4vw,2rem)}
+
+.topbar{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px);margin-top:calc(-1 * env(safe-area-inset-top,0px))}
+.topbar .wrap{display:flex;justify-content:space-between;align-items:center;gap:1rem;min-height:3.75rem}
+.wordmark{display:flex;align-items:center;gap:.6rem;color:var(--ink);font-weight:600;font-size:.95rem;line-height:1.1}
+.wordmark:hover{text-decoration:none}
+.wordmark .ring{width:1.7rem;height:1.7rem;border-radius:50%;border:4px solid var(--ink);box-shadow:inset 0 0 0 3px var(--bg),inset 0 0 0 7px var(--cyan);flex:none}
+.pill{white-space:nowrap;display:inline-flex;align-items:center;gap:.35rem;border-radius:980px;font-weight:500;padding:11px 22px;background:var(--cyan);color:var(--on-cyan)}
+.pill:hover{text-decoration:none;filter:brightness(1.05)}
+.pill.small{font-size:13px;padding:9px 18px;background:var(--ink);color:var(--bg)}
+
+header.hero{padding:clamp(3rem,8vw,6rem) 0 clamp(2.5rem,5vw,4rem);text-align:center}
+.eyebrow-hero{color:var(--t2-ink);font-weight:500;font-size:15px;margin:0 0 1rem}
+.client{display:none;align-items:center;justify-content:center;gap:.5rem;color:var(--muted);font-size:14px;margin:0 0 1.25rem}
+.client.on{display:flex}
+.client .dot{width:.7rem;height:.7rem;border-radius:50%;background:var(--client,var(--cyan))}
+h1{font-weight:600;font-size:clamp(3rem,9vw,5.85rem);line-height:1.04;letter-spacing:-.045em;margin:0 0 1.25rem}
+h1 em, h2 em{font-style:normal;color:var(--cyan)}
+.lede{font-size:clamp(1.15rem,2.2vw,1.5rem);line-height:1.35;letter-spacing:-.01em;color:var(--body-ink);max-width:44rem;margin:0 auto}
+
+/* Try this week: before / approach / after style tiles */
+.start{margin:0 0 clamp(3.5rem,8vw,6rem)}
+.start-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:.5rem 1rem;margin-bottom:1.5rem}
+.eyebrow{font-size:13px;font-weight:500;letter-spacing:.02em;color:var(--muted);margin:0 0 .5rem}
+.start h2{font-weight:600;font-size:clamp(2rem,4vw,2.5rem);letter-spacing:-.02em;line-height:1.1;margin:0}
+.progress{color:var(--muted);font-size:14px}
+.start ol{list-style:none;margin:0;padding:0;display:grid;gap:1rem}
+@media (min-width:760px){.start ol{grid-template-columns:repeat(3,1fr)}}
+.try{border-radius:18px;padding:1.75rem 1.5rem;border:1px solid;display:flex;flex-direction:column;gap:.75rem}
+.try:nth-child(1){background:var(--t1);border-color:var(--t1-line);--tone:var(--t1-ink)}
+.try:nth-child(2){background:var(--t2);border-color:var(--t2-line);--tone:var(--t2-ink)}
+.try:nth-child(3){background:var(--t3);border-color:var(--t3-line);--tone:var(--t3-ink)}
+.try-label{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--tone);margin:0}
+.try-title{font-weight:600;font-size:1.3rem;line-height:1.25;letter-spacing:-.015em;margin:0}
+.try-title a{color:var(--ink)}
+.try p.tip{margin:0;color:var(--body-ink);flex:1}
+.tick{display:flex;align-items:center;gap:.6rem;font-size:14px;font-weight:500;color:var(--ink);cursor:pointer;margin-top:.25rem}
+.tick input{appearance:none;-webkit-appearance:none;margin:0;width:1.6rem;height:1.6rem;border-radius:50%;border:2px solid var(--tone);background:transparent;cursor:pointer;display:grid;place-items:center;flex:none}
+.tick input::after{content:"";width:.4rem;height:.75rem;border:solid var(--bg);border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px);opacity:0}
+.tick input:checked{background:var(--tone)}
+.tick input:checked::after{opacity:1}
+.try.done .try-title a{text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:var(--tone)}
+
+.layout{display:grid;gap:2.5rem;padding-bottom:clamp(3.5rem,8vw,6rem)}
+@media (min-width:900px){.layout{grid-template-columns:15rem 1fr;gap:3.5rem}}
+nav.topics{align-self:start}
+@media (min-width:900px){nav.topics{position:sticky;top:calc(env(safe-area-inset-top,0px) + 5.5rem)}}
+nav.topics ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.5rem}
+@media (min-width:900px){nav.topics ul{flex-direction:column;gap:.1rem}}
+nav.topics a{display:block;color:var(--body-ink);font-size:14px;padding:.4rem .9rem;border-radius:980px;background:var(--tile);border:1px solid var(--line)}
+@media (min-width:900px){nav.topics a{background:none;border:0;padding:.45rem .75rem}}
+nav.topics a:hover{text-decoration:none;color:var(--ink);background:var(--soft)}
+.search{margin-top:1.5rem}
+.search label{display:block;font-size:13px;font-weight:500;color:var(--muted);margin-bottom:.4rem}
+.search input{width:100%;font:inherit;font-size:15px;padding:.6rem 1rem;border-radius:980px;border:1px solid var(--line);background:var(--tile);color:var(--ink)}
+
+main section.topic{margin-bottom:clamp(3rem,6vw,4.5rem)}
+main h2.topic-title{font-weight:600;font-size:clamp(1.85rem,4.2vw,2.5rem);line-height:1.1;letter-spacing:-.03em;margin:0 0 .6rem}
+.topic-intro{color:var(--body-ink);margin:0 0 1.5rem;max-width:40rem;font-size:1.05rem}
+.cards{background:var(--tile);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+details.card + details.card{border-top:1px solid var(--line)}
+details.card summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:1rem;padding:1.35rem 1.5rem;align-items:start}
+details.card summary::-webkit-details-marker{display:none}
+details.card summary:hover{background:var(--soft)}
+.card h3{font-size:1.1rem;font-weight:600;letter-spacing:-.015em;line-height:1.3;margin:0}
+.why{margin:.35rem 0 0;color:var(--body-ink);font-size:.97rem;max-width:44rem}
+.chev{width:2rem;height:2rem;border-radius:50%;background:var(--soft);display:grid;place-items:center;transition:transform .2s}
+.chev svg{width:.8rem;height:.8rem;stroke:var(--ink)}
+details[open] .chev{transform:rotate(180deg);background:var(--cyan)}
+details[open] .chev svg{stroke:var(--on-cyan)}
+.card-body{padding:0 1.5rem 1.6rem;max-width:46rem}
+.card-body ol{margin:0 0 1.1rem;padding-left:1.35rem;color:var(--body-ink)}
+.card-body li{margin-bottom:.4rem;padding-left:.2rem}
+.card-body li::marker{font-weight:600;color:var(--ink)}
+.note{background:var(--t2);border:1px solid var(--t2-line);border-radius:12px;padding:.75rem 1rem;margin:0 0 1.1rem;font-size:.95rem;color:var(--body-ink)}
+.links{display:flex;flex-wrap:wrap;gap:.5rem 1.5rem}
+.links a{font-weight:500;font-size:.97rem}
+
+details.further{margin-top:1rem}
+details.further > summary{cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:.5rem;font-weight:600;font-size:1.1rem;padding:.8rem 1.4rem;border-radius:980px;background:var(--tile);border:1px solid var(--line)}
+details.further > summary::-webkit-details-marker{display:none}
+details.further > summary::after{content:"›";font-size:1.3rem;line-height:1;transition:transform .2s}
+details.further[open] > summary::after{transform:rotate(90deg)}
+details.further > div{padding-top:1.5rem}
+details.further h3.sub{font-size:13px;font-weight:500;letter-spacing:.02em;color:var(--muted);margin:1.75rem 0 .6rem}
+details.further h3.sub:first-child{margin-top:0}
+.empty{padding:1rem 0;color:var(--muted)}
+
+.band{background:var(--band);color:var(--band-ink);padding:clamp(3.5rem,8vw,6rem) 0;text-align:center}
+.band .eyebrow{color:#94A6BA}
+.band h2{font-weight:600;font-size:clamp(2rem,5vw,3rem);line-height:1.1;letter-spacing:-.03em;margin:0 auto 1rem;max-width:40rem}
+.band p{color:#C9D4E0;max-width:36rem;margin:0 auto 2rem;font-size:1.1rem}
+.band .actions{display:flex;flex-wrap:wrap;justify-content:center;gap:1rem 1.5rem;align-items:center}
+.band a.text{color:var(--cyan);font-size:1.05rem}
+
+footer{padding:2.5rem 0 3rem;color:var(--muted);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem}
+footer p{margin:.2rem 0}
+footer strong{color:var(--ink);font-weight:600}
+
+@media print{
+  .preview,.topbar,nav.topics,.search,.chev,.band{display:none!important}
+  details.card .card-body, details.further > div{display:block!important}
+  body{background:#fff;color:#000}
+  .layout{display:block}
+}
+.draft{background:#FFF4DC;color:#5A3E00;font-size:14px;text-align:center;padding:.6rem 1rem}
+.hidden{display:none!important}
+.prompt{position:relative;margin:0 0 1.1rem;background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:1rem 1.1rem 3.2rem}
+.prompt .label{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--t2-ink);margin:0 0 .5rem}
+.prompt pre{margin:0;font-family:var(--font);font-size:.93rem;line-height:1.55;white-space:pre-wrap;word-wrap:break-word;color:var(--body-ink)}
+.prompt .copy{position:absolute;right:.8rem;bottom:.8rem;border:0;cursor:pointer;font:inherit;font-size:13px;font-weight:500;border-radius:980px;padding:7px 16px;background:var(--cyan);color:var(--on-cyan)}
+.prompt .copy.done{background:var(--ink);color:var(--bg)}
+</style>
+</head>
+<body>
+<div class="draft hidden" id="draft">Draft preview. Participants can't see this page until the workshop is set to Live.</div>
+<div class="topbar">
+  <div class="wrap">
+    <a class="wordmark" href="https://usingtechnologybetter.com/" target="_blank" rel="noopener"><span class="ring" aria-hidden="true"></span>Using Technology Better</a>
+    <a class="pill small" href="#" data-booking target="_blank" rel="noopener">Book a follow-up ›</a>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <p class="eyebrow-hero">Workshop resources</p>
+    <p class="client" id="client"><span class="dot"></span><span id="client-name"></span></p>
+    <h1 id="view-title"></h1>
+    <p class="lede" id="view-lede"></p>
+  </header>
+
+  <section class="start" id="start" aria-labelledby="start-title">
+    <div class="start-head">
+      <div><p class="eyebrow">Start here</p><h2 id="start-title">Try these three this week.</h2></div>
+      <span class="progress" id="progress" aria-live="polite"></span>
+    </div>
+    <ol id="start-list"></ol>
+  </section>
+
+  <div class="layout" id="main-layout">
+    <nav class="topics" aria-label="Topics">
+      <p class="eyebrow">On this page</p>
+      <ul id="topic-nav"></ul>
+      <div class="search" id="search-wrap">
+        <label for="search">Search these resources</label>
+        <input id="search" type="search" placeholder="e.g. email, Gems, meeting">
+      </div>
+    </nav>
+    <main id="main"></main>
+  </div>
+</div>
+
+<section class="band" aria-labelledby="band-title">
+  <div class="wrap">
+    <p class="eyebrow">One last thing</p>
+    <h2 id="band-title">Ready to take Gemini <em>further with your team?</em></h2>
+    <p>We run follow-up sessions, build Gems around the work your teams do every week, and help organisations roll Gemini out with sensible guardrails. Thirty minutes on a call is enough to work out where to start.</p>
+    <div class="actions">
+      <a class="pill" href="#" data-booking target="_blank" rel="noopener">Book a consultation ›</a>
+      <a class="text" href="#" data-services target="_blank" rel="noopener">See how we work ›</a>
+      <a class="text hidden" id="trainer-link" href="#" target="_blank" rel="noopener">Email your trainer ›</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <p><strong>Using Technology Better</strong></p>
+      <p>People first. Then the platform.</p>
+    </div>
+    <div>
+      <p id="checked-line">Every how-to on this page was last checked <span id="checked"></span>.</p>
+      <p>Google Workspace, Gemini and NotebookLM are trademarks of Google LLC.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+const DATA = {"workshop": {"id": "techm-work-smarter", "title": "Work smarter with Google Gemini", "highlight": "Google Gemini", "intro": "Everything from the session in one place: using Gemini safely at work, prompts that get you usable results, and where it saves the most time in Gmail, Docs and Drive. Start with the three below.", "client": "Tech Mahindra", "clientColour": "#E31837", "date": "", "trainerEmail": "", "draft": false}, "start": [{"id": "meeting-brief", "tip": "Before your next project meeting, add the agenda and papers to Gemini and ask for a five-point brief."}, {"id": "gmail-summary", "tip": "Open the longest thread in your inbox and ask Gemini what's still outstanding, and who's waiting on you."}, {"id": "advanced", "tip": "Take one report or plan you're writing this week and write the prompt using all six parts."}], "core": ["work-account", "first-draft", "client-data", "not-judgement", "meet-notes", "scenario", "parts", "advanced", "habits", "context", "gmail-summary", "gmail-ask", "help-me-write", "shift-compose", "docs-panel", "docs-reference", "docs-rewrite", "meeting-brief", "compare-docs", "drive-panel", "canvas", "images", "p-announce", "p-status", "p-risks", "p-client-update", "p-actions", "p-onboard"], "further": ["gems", "gem-questions", "deep-research", "notebooklm", "sheets", "help-links"], "cards": {"work-account": {"id": "work-account", "topic": "safe", "title": "Always use your Tech Mahindra Google account", "why": "Signed in with your work account, Gemini runs inside your organisation's Google Workspace protections. Free consumer versions collect usage data and conversations in ways your work account doesn't.", "steps": ["Check the profile picture at the top right shows your work account before you start.", "With your work account, your content stays within the organisation, isn't used for other customers, and isn't used to train models outside your domain without permission.", "Your existing Workspace security settings apply automatically, and Gemini only looks at your files when you ask it to."], "note": "Which Gemini features you see depends on how your Google Workspace is set up. If something on this page is missing, check with your IT team.", "links": [{"label": "Getting started with Gemini in Workspace", "url": "https://support.google.com/docs/answer/13952129?hl=en"}], "prompt": ""}, "first-draft": {"id": "first-draft", "topic": "safe", "title": "Treat everything as a first draft", "why": "Gemini can sound completely sure of itself and still be wrong. That's called hallucination, and it's part of how these tools work, so plan for it.", "steps": ["Read every output before you use it. Check names, dates, figures, and anything technical or contractual.", "Take extra care with anything going to clients, partners or senior leadership.", "If it matters, check the claim against the original source, not by asking Gemini again."], "links": [], "note": "", "prompt": ""}, "client-data": {"id": "client-data", "topic": "safe", "title": "Be deliberate with client and confidential information", "why": "Gemini can see anything you can see. That's useful, until a folder turns out to be shared more widely than you thought, or a document belongs to a client with strict terms.", "steps": ["Check who a file or folder is shared with before you point Gemini at it.", "Before using client material, make sure it fits your client agreement and Tech Mahindra's information security policies.", "Leave out names, account details and anything commercially sensitive when Gemini doesn't need them."], "links": [], "note": "", "prompt": ""}, "not-judgement": {"id": "not-judgement", "topic": "safe", "title": "Know what AI isn't", "why": "Gemini is a capable assistant, not a colleague with judgement. Knowing its limits is what makes it safe to use.", "steps": ["It lacks human context. It doesn't know your client relationships, team dynamics or office politics.", "It's no replacement for your judgement. Decisions, sensitive conversations and client commitments stay with you.", "It needs good input. Vague prompts and messy data give you vague, messy answers."], "links": [], "note": "", "prompt": ""}, "meet-notes": {"id": "meet-notes", "topic": "safe", "title": "Ask before you use Take notes for me", "why": "Gemini can take notes in Google Meet. Treat it like recording: everyone in the meeting should know and agree.", "steps": ["Tell everyone at the start that Gemini is taking notes.", "Take particular care on calls with clients, partners or anyone outside Tech Mahindra.", "Check the notes before you share them. They're a summary, not formal minutes."], "links": [], "note": "", "prompt": ""}, "scenario": {"id": "scenario", "topic": "prompting", "title": "The practice scenario: Gordon and Aether Edge", "why": "In the workshop we practised on a made-up project, so everyone could experiment without touching real client work.", "steps": ["Gordon is a principal director at Tech Mahindra with a background in enterprise cloud architecture and telecommunications engineering.", "He's leading Aether Edge, a fictional AI-driven network orchestration platform.", "He needs to announce the project to the team, write a project brief, and summarise the key documents into a high-level overview.", "Keep practising on Aether Edge, or swap in a project of your own once you're comfortable with the approach."], "links": [], "note": "", "prompt": ""}, "parts": {"id": "parts", "topic": "prompting", "title": "Use PARTS for everyday prompts", "why": "Five ingredients that turn a vague request into something Gemini can do well. \"Write an email about Aether Edge\" gets you something generic. A PARTS prompt gets you something close to sendable.", "steps": ["Persona: who Gemini should be. \"You are a principal director at a global technology services company.\"", "Aim: the one thing you need. \"Write an email announcing the Aether Edge project.\"", "Recipients: who'll read it. \"For the delivery, engineering and operations teams.\"", "Theme: tone and requirements. \"Clear and energising, no hype, under 250 words.\"", "Structure: the shape of the answer. \"A subject line, what the project is, why it matters, what happens next, and who to contact.\""], "prompt": "You are a principal director at a global technology services company, leading a new AI-driven network orchestration platform called Aether Edge. Write an email announcing the project to the delivery, engineering and operations teams. Keep it clear and energising without hype, and under 250 words. Structure it as: a subject line, what Aether Edge is, why it matters to the business, what happens in the next four weeks, and who to contact with questions.", "links": [{"label": "Google's prompting guide (PDF)", "url": "https://services.google.com/fh/files/misc/gemini-for-google-workspace-prompting-guide-101.pdf"}], "note": ""}, "advanced": {"id": "advanced", "topic": "prompting", "title": "The advanced prompt: say what a good result looks like", "why": "PARTS tells Gemini what to write. For plans, reports and anything that goes to leadership, add what success looks like and what to leave out. That's the bit most prompts skip, and why so many AI answers are technically fine but not actually usable.", "steps": ["Role: who Gemini is.", "Context: why this document exists and who will read it. Your audience belongs here, not tacked on at the end.", "Task: what to produce.", "Evaluation criteria: what a successful result does for the reader.", "Format: sections, tables and length.", "Constraints: proper don'ts. \"Don't include marketing language\" is more useful than \"be concise\"."], "prompt": "Role: You are a principal director at Tech Mahindra with deep experience in enterprise cloud architecture, telecommunications engineering and delivering large programs for global clients.\n\nContext: Tech Mahindra is starting Aether Edge, an AI-driven network orchestration platform. Delivery will involve five workstreams: operations, development, beta testing, risk analysis, and legal and compliance, with teams working across several locations and time zones. Senior leaders need a clear plan they can use to track progress, allocate people and spot risks before they affect delivery.\n\nTask: Develop a project management plan for Aether Edge covering key dates, milestones, dependencies, and roles and responsibilities across the five workstreams. Then summarise it as a report for senior leadership.\n\nEvaluation criteria: A successful report will:\n- give leaders an at-a-glance view of the timeline and critical milestones\n- make ownership obvious for every phase and workstream\n- surface the risks and dependencies that could delay delivery, not just the happy path\n- be detailed enough to support resourcing decisions without leaders needing the full plan\n- read as something a leader could forward to their teams with confidence\n\nFormat: An executive summary (3 to 4 sentences), a milestones table (date, milestone, responsible workstream), a roles and responsibilities section, and a risks and dependencies section. Use headings and tables rather than long paragraphs. No more than two pages.\n\nConstraints:\n- Keep a confident, factual tone suited to senior leadership. This reports on a plan in motion; it isn't a pitch.\n- Don't include marketing copy or client-facing language. This is an internal planning document.\n- Don't leave out risks or challenges to sound positive. Leaders need an accurate picture.\n- Avoid generic filler such as \"ensure alignment\" or \"drive synergies\". Be specific to Aether Edge.\n- Mark any dates or details you've had to assume as [TBC].", "note": "The short version: PARTS tells Gemini what to write. This format tells it what success looks like, and that's the difference between a decent first draft and something you can actually use.", "links": []}, "habits": {"id": "habits", "topic": "prompting", "title": "Four habits for better answers", "why": "Small changes to how you ask make a big difference to what you get back.", "steps": ["Be clear and specific. Say exactly what you want, and who it's for.", "Break big jobs into steps: outline first, then draft, then refine.", "Use the words that matter, such as the project name, client industry or delivery phase, so Gemini knows the context.", "Keep the conversation going. If the first answer is off, say what's wrong: \"shorter\", \"more technical\", \"focus on the risks\"."], "links": [], "note": "", "prompt": ""}, "context": {"id": "context", "topic": "prompting", "title": "Give Gemini the context it can't guess", "why": "Gemini doesn't know your role, your account or how your team works. Tell it once at the start of a chat, and every answer after that improves.", "steps": ["Start a new chat by describing your role, your team, what you're working on and how you like to communicate.", "Finish with an instruction not to reply yet, so it just takes the context on board.", "Then ask your real questions in the same chat."], "prompt": "I'm a [your role] at Tech Mahindra, a global technology consulting and digital services company.\n\nMy team: [size, locations, what you deliver]\nWhat I'm working on: [current project or priorities]\nWho I usually write for: [e.g. client stakeholders, delivery leads, senior leadership]\nHow I communicate: clear, direct and specific. Plain English, no buzzwords.\n\nDon't respond to this. Use it to shape your answers for the rest of this chat.", "note": "If you use the same context every week, turn it into a Gem so you don't have to paste it each time. See Gems under Go further.", "links": []}, "gmail-summary": {"id": "gmail-summary", "topic": "gmail", "title": "Summarise a long email thread", "why": "Thirty replies across three time zones about the Aether Edge beta dates? Get the gist, and what's still undecided, in seconds.", "steps": ["Open the thread and look for the Gemini summary at the top.", "For more, open the Gemini side panel with the Gemini icon at the top right of Gmail.", "Ask a follow-up, such as \"What's still outstanding?\" or \"Who's waiting on me?\""], "links": [], "note": "", "prompt": ""}, "gmail-ask": {"id": "gmail-ask", "topic": "gmail", "title": "Ask your inbox a question", "why": "The side panel can search across many emails, not just the one you're reading.", "steps": ["Open the Gemini side panel in Gmail.", "Ask something like \"Summarise the emails I've had this week about Aether Edge planning.\"", "Open the source emails it points to before you act on anything."], "links": [], "note": "", "prompt": ""}, "help-me-write": {"id": "help-me-write", "topic": "gmail", "title": "Draft emails with Help me write", "why": "Start from a prompt instead of a blank screen, then make it sound like you.", "steps": ["Click Compose, then Help me write (the pencil with a spark) in the toolbar.", "Describe the email you need. PARTS works here too.", "Use Refine to change the tone or length, then edit it yourself before you send."], "note": "Gemini doesn't know the history with that client. Read every draft before it goes, especially anything external.", "links": [], "prompt": ""}, "shift-compose": {"id": "shift-compose", "topic": "gmail", "title": "Open a new email in its own window", "why": "Hold Shift as you click Compose and the draft opens in a separate window. Put it beside the email you're replying to, or on a second screen.", "steps": [], "links": [], "note": "", "prompt": ""}, "docs-panel": {"id": "docs-panel", "topic": "docs", "title": "Write a project brief with the Docs side panel", "why": "The side panel can see the document you're working in, so you can draft, summarise and tighten without leaving it.", "steps": ["Open a Google Doc and click the Gemini icon at the top right.", "Ask for what you need, such as \"Draft a one-page project brief for Aether Edge covering goals, scope, workstreams and success measures.\"", "Follow up to refine it: \"Add a risk register with three risks and how we'd handle each.\"", "Click Insert to put it into the document."], "note": "Insert is the step people miss. Until you click it, the text only lives in the side panel.", "links": [{"label": "Write with Gemini in Google Docs", "url": "https://support.google.com/docs/answer/13951448?hl=en"}], "prompt": ""}, "docs-reference": {"id": "docs-reference", "topic": "docs", "title": "Draw on other documents while you write", "why": "Writing a status report? Ask Gemini to pull from the project plan and last week's report while you work.", "steps": ["In the side panel, name the files you want Gemini to use.", "Ask it to summarise, compare or draft from them: \"Using the project plan, list what's due in the next two weeks.\"", "Check it has used the latest version of each file."], "links": [], "note": "", "prompt": ""}, "docs-rewrite": {"id": "docs-rewrite", "topic": "docs", "title": "Rewrite one update for different audiences", "why": "The same update often needs to go to engineers, delivery leads and executives. Write it once, then ask Gemini to adjust it.", "steps": ["Select the section you want to change.", "In the side panel, ask: \"Rewrite this for senior leadership: shorter, focused on decisions and risks, no technical detail.\"", "Compare the new version with yours before you insert it."], "links": [], "note": "", "prompt": ""}, "meeting-brief": {"id": "meeting-brief", "topic": "app", "title": "Walk into a meeting already briefed", "why": "Steering committee in 20 minutes and three documents you haven't read? If you only try one thing from this page, try this.", "steps": ["Go to gemini.google.com, signed in with your work account.", "Type @ and choose the documents from your Drive.", "Ask for a short brief, including open questions and decisions needed."], "prompt": "I have a steering committee meeting in 20 minutes about [project]. Using @[agenda] @[status report] @[risk log], give me a five-point brief I can read in two minutes. Highlight decisions we need to make, open questions, and anything that could affect delivery dates.", "links": [{"label": "Gemini in the Drive side panel", "url": "https://workspaceupdates.googleblog.com/2025/05/start-conversation-with-gemini-in-drive-about-specific-files.html"}], "note": ""}, "compare-docs": {"id": "compare-docs", "topic": "app", "title": "Summarise and compare documents", "why": "Two versions of a plan, two vendor proposals, or this quarter's approach against last quarter's. See what's actually different.", "steps": ["In the Gemini app, type @ and choose both documents.", "Ask for the differences as a table.", "Follow up: \"Which approach carries less delivery risk, and why?\""], "prompt": "Compare @[document 1] and @[document 2]. Summarise each in two sentences, then show the key differences in a table with rows for: objective, scope, timeline, cost and resourcing, and risks. Finish with three questions I should ask before we choose.", "links": [], "note": ""}, "drive-panel": {"id": "drive-panel", "topic": "app", "title": "Summarise files in the Drive side panel", "why": "Looking at a folder of project files you've just been added to? Ask Gemini what's in them before you open each one.", "steps": ["In Google Drive, select one or more files, then click the Gemini icon at the top right.", "Ask for a summary: \"What are these documents about, and what are the key decisions in them?\"", "Follow up with specific questions, or ask it to draft a high-level overview of the project."], "links": [], "note": "", "prompt": ""}, "canvas": {"id": "canvas", "topic": "app", "title": "Build a full project plan in Canvas", "why": "Canvas gives you a document beside the chat, so you and Gemini can work on a longer piece together instead of copying and pasting.", "steps": ["In the Gemini app, choose Canvas below the prompt box.", "Paste in the advanced prompt from Write prompts that work, or ask for a project plan for your own project.", "Highlight any section and ask Gemini to change just that part.", "Export it to Google Docs when you're ready to share it."], "links": [{"label": "Create with Canvas", "url": "https://support.google.com/gemini/answer/16047321"}], "note": "", "prompt": ""}, "images": {"id": "images", "topic": "app", "title": "Create images for slide decks", "why": "Useful for concept visuals and internal presentations when you don't have a designer on hand.", "steps": ["In the Gemini app, describe the image: subject, style, colours and where you'll use it.", "Not quite right? Say what to change rather than starting again.", "Download the one you like and add it to Google Slides."], "prompt": "Create a clean, modern image for a slide deck introducing Aether Edge, an AI-driven network orchestration platform. Show an abstract network of connected nodes with light flowing between them, deep blue and red colour palette, lots of empty space on the left for a title, widescreen 16:9.", "note": "Great for internal decks and concept work. Anything client-facing or public should go through your brand and marketing review.", "links": []}, "p-announce": {"id": "p-announce", "topic": "prompts", "title": "Announce a new project to the team", "why": "A clear kickoff email that sets the tone without overwhelming anyone.", "prompt": "You are a [role] at Tech Mahindra. Write an email announcing [project] to [teams]. Explain what the project is, why it matters, what happens in the next month, and where to ask questions. Clear and energising, no hype, under 250 words. Include a subject line.", "steps": [], "links": [], "note": ""}, "p-status": {"id": "p-status", "topic": "prompts", "title": "Write a weekly status report", "why": "Turn scattered notes into a report stakeholders can read in two minutes.", "prompt": "Turn my notes below into a weekly status report for [audience] on [project]. Include: overall status (on track, at risk or off track) with one line explaining why, what was completed, what's next, risks and issues with owners, and decisions needed. Use a short table for risks. No more than one page. Don't overstate progress.\n\nMy notes: [paste notes]", "steps": [], "links": [], "note": ""}, "p-risks": {"id": "p-risks", "topic": "prompts", "title": "Draft a risk register", "why": "A structured starting point for the risks conversation with your team.", "prompt": "You are an experienced delivery manager. For [project], which involves [brief description], draft a risk register with 8 to 10 risks across delivery, technical, people, commercial and compliance areas. For each give: risk, likelihood (high, medium, low), impact, early warning signs, mitigation, and suggested owner role. Present it as a table. Mark anything that depends on information I haven't given you as [TBC].", "steps": [], "links": [], "note": ""}, "p-client-update": {"id": "p-client-update", "topic": "prompts", "title": "Explain a delay or change to a client", "why": "Hard messages land better when they're clear, calm and specific.", "prompt": "Draft an email to [client stakeholder] explaining that [milestone] will move from [old date] to [new date] because [reason]. Be direct and take ownership without over-apologising. Explain the impact, what we're doing about it, and what we need from them, if anything. Professional and warm, under 200 words.", "note": "Only include what your client agreement allows, and have your account lead review anything contractual.", "steps": [], "links": []}, "p-actions": {"id": "p-actions", "topic": "prompts", "title": "Turn meeting notes into actions", "why": "Messy notes in, a clean list of who's doing what out.", "prompt": "Turn my notes from today's [meeting] into: a three-sentence summary, a table of actions with owner and due date, and a list of decisions made. If an action has no owner or date, mark it [TBC] rather than guessing.\n\nNotes: [paste notes]", "steps": [], "links": [], "note": ""}, "p-onboard": {"id": "p-onboard", "topic": "prompts", "title": "Plan a new team member's first two weeks", "why": "Help someone joining mid-project get productive faster.", "prompt": "Create a two-week onboarding plan for a [role] joining the [project] team. Include people to meet, documents to read, systems to get access to, and small tasks that build confidence. Present it as a day-by-day table for week one and a simpler list for week two.", "steps": [], "links": [], "note": ""}, "gems": {"id": "gems", "topic": "gems", "title": "Build a Gem for a job you do every week", "why": "A Gem is Gemini set up for one job, with your instructions and files already loaded. Status reports, client updates, meeting briefs: set it up once and reuse it.", "steps": ["In the Gemini app, open Gems from the menu and create a new Gem.", "Give it a clear name, such as \"Status report writer\".", "Write the instructions: who it is, what it does, the tone, and the format you want.", "Add knowledge files if it needs them, such as your report template or style guide.", "Test it with a few real requests, then refine the instructions until the answers are right."], "prompt": "Role: You are a senior delivery manager at Tech Mahindra who writes clear, honest project status reports for clients and senior leaders.\n\nHow to start: Before drafting, ask for the project name, the audience, the reporting period, and my notes. If I've already given you these, don't ask again.\n\nTone: Clear, direct and factual. Confident but never spin. Short sentences.\n\nAvoid: \"synergy\", \"leverage\", \"seamless\", \"best-in-class\", \"game-changer\", and anything that sounds like a press release.\n\nBehaviour: If something important is missing, such as an owner, a date or a risk, flag it rather than filling it in. Label any assumption clearly.\n\nKnowledge: Check the attached files first for our report template and past examples. If you use anything outside them, say so.\n\nOutput: Overall status with a one-line reason, completed this period, next period, risks and issues (table with owners), and decisions needed. One page at most.", "links": [{"label": "Tips for creating Gems", "url": "https://support.google.com/gemini/answer/15235603?hl=en"}], "note": ""}, "gem-questions": {"id": "gem-questions", "topic": "gems", "title": "Questions to answer before you build a Gem", "why": "Five minutes on these saves a lot of trial and error.", "steps": ["Purpose: What's its main job? Who will use it? What problem does it solve?", "Behaviour: What tone? Should it ask questions first? How should it handle a vague request?", "Knowledge: What does it need to know? Which files should it use? What should it stay away from?", "Output: What format, length and structure?", "Refinement: After testing, what needs to change in the instructions?"], "links": [], "note": "", "prompt": ""}, "deep-research": {"id": "deep-research", "topic": "more-tools", "title": "Use Deep Research for the big questions", "why": "For questions like \"What are the main approaches to AI-driven network orchestration, and who's doing it well?\", Deep Research reads widely and writes a report with sources.", "steps": ["In the Gemini app, choose Deep Research below the prompt box.", "Describe the question and what you'll use the answer for.", "Check the research plan it suggests, adjust it if needed, then start it.", "Read the sources behind any claim you plan to rely on."], "note": "It takes a few minutes, and it's only as good as the sources it finds. Treat it as a well-organised starting point.", "links": [], "prompt": ""}, "notebooklm": {"id": "notebooklm", "topic": "more-tools", "title": "Ask questions of your own documents in NotebookLM", "why": "Add a project's key documents and NotebookLM answers using only those sources, with references to where each answer came from.", "steps": ["Go to NotebookLM and create a notebook for the project.", "Add your sources: Google Docs, PDFs or websites.", "Ask questions like \"What does the statement of work say about acceptance testing?\" and click the references to check the source."], "note": "Follow the same rules for client documents as anywhere else: only add what you're allowed to.", "links": [{"label": "Getting started with NotebookLM", "url": "https://support.google.com/notebooklm/answer/15724458?hl=en"}], "prompt": ""}, "sheets": {"id": "sheets", "topic": "more-tools", "title": "Make sense of data in Google Sheets", "why": "Gemini in Sheets can summarise a project tracker, suggest charts and write formulas you'd otherwise have to look up.", "steps": ["Open the spreadsheet and click the Gemini icon at the top right.", "Ask a question about the data: \"Which workstreams have the most overdue tasks?\"", "Ask for a chart or a formula, then check a few results by hand."], "links": [{"label": "Gemini in Google Sheets", "url": "https://support.google.com/docs/answer/14218565?hl=en"}], "note": "", "prompt": ""}, "help-links": {"id": "help-links", "topic": "help", "title": "Official guides from Google", "why": "Google's own help pages, for when you want the full detail.", "steps": [], "links": [{"label": "Google's prompting guide (PDF)", "url": "https://services.google.com/fh/files/misc/gemini-for-google-workspace-prompting-guide-101.pdf"}, {"label": "Gemini in Google Workspace", "url": "https://support.google.com/docs/answer/13952129?hl=en"}, {"label": "Write with Gemini in Docs", "url": "https://support.google.com/docs/answer/13951448?hl=en"}, {"label": "Upload files to Gemini", "url": "https://support.google.com/gemini/answer/14903178?hl=en"}, {"label": "Tips for creating Gems", "url": "https://support.google.com/gemini/answer/15235603?hl=en"}, {"label": "Canvas", "url": "https://support.google.com/gemini/answer/16047321"}, {"label": "NotebookLM", "url": "https://support.google.com/notebooklm/answer/15724458?hl=en"}], "note": "", "prompt": ""}}, "topics": {"safe": {"title": "Use Gemini safely at work", "intro": "Start here. The same care you already take with client and company information applies to AI, just with a new tool in the mix."}, "prompting": {"title": "Write prompts that work", "intro": "Rubbish in, rubbish out. The quickest way to better answers is a better prompt."}, "gmail": {"title": "Get through email faster", "intro": "Project threads, client updates, the reply-all that won't die. Gemini in Gmail gets you the gist and a first draft."}, "docs": {"title": "Draft and refine in Google Docs", "intro": "Project briefs, plans and status reports: start from a structure instead of a blank page."}, "app": {"title": "Do more in the Gemini app", "intro": "The Gemini app at gemini.google.com can work across several files at once. This is where most people save the most time."}, "prompts": {"title": "Prompts you can copy", "intro": "Swap the bits in [square brackets] for your own details. Each one is a starting point, not a finished product."}, "gems": {"title": "Gems: your own assistants", "intro": "Set Gemini up once for a job you do every week, then reuse it."}, "more-tools": {"title": "Research and your own sources", "intro": "Tools for bigger questions, your own documents and your data."}, "help": {"title": "Google's own help pages", "intro": ""}}, "lastChecked": "September 2026", "bookingUrl": "https://usingtechnologybetter.com/", "servicesUrl": "https://usingtechnologybetter.com/"};
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
+
+function headline(title, highlight){
+  let t = String(title).trim();
+  if (!/[.!?]$/.test(t)) t += ".";
+  const h = String(highlight || "").trim();
+  const i = h ? t.toLowerCase().lastIndexOf(h.toLowerCase()) : -1;
+  if (i < 0) return esc(t);
+  let end = i + h.length;
+  if (t.slice(end) === ".") end += 1;           // keep the full stop inside the highlight
+  return esc(t.slice(0, i)) + "<em>" + esc(t.slice(i, end)) + "</em>" + esc(t.slice(end));
+}
+
+function cardHTML(c){
+  const steps = c.steps && c.steps.length ? `<ol>${c.steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol>` : "";
+  const note = c.note ? `<p class="note">${esc(c.note)}</p>` : "";
+  const prompt = c.prompt ? `<div class="prompt"><p class="label">Prompt to copy</p><pre>${esc(c.prompt)}</pre><button class="copy" type="button">Copy prompt</button></div>` : "";
+  const links = (c.links||[]).length ? `<div class="links">${c.links.map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ›</a>`).join("")}</div>` : "";
+  const hay = (c.title+" "+c.why+" "+(c.steps||[]).join(" ")+" "+(c.prompt||"")).toLowerCase();
+  return `<details class="card" id="card-${esc(c.id)}" data-hay="${esc(hay)}">
+    <summary><div><h3>${esc(c.title)}</h3>${c.why?`<p class="why">${esc(c.why)}</p>`:""}</div>
+    <span class="chev"><svg viewBox="0 0 12 12" fill="none" stroke-width="2"><path d="M2 4l4 4 4-4"/></svg></span></summary>
+    <div class="card-body">${steps}${prompt}${note}${links}</div></details>`;
+}
+
+function groupByTopic(ids){
+  const groups = [];
+  ids.forEach(id=>{
+    const c = DATA.cards[id]; if(!c) return;
+    let g = groups.find(g=>g.topic===c.topic);
+    if(!g){ g={topic:c.topic, cards:[]}; groups.push(g); }
+    g.cards.push(c);
+  });
+  return groups;
+}
+const topicTitle = t => (DATA.topics[t] && DATA.topics[t].title) || "More";
+const topicIntro = t => (DATA.topics[t] && DATA.topics[t].intro) || "";
+
+function notFound(){
+  document.getElementById("view-title").innerHTML = headline("Page not found", "not found");
+  document.getElementById("view-lede").textContent = "Check the link from your session, or ask your trainer to send it again.";
+  ["start","main-layout"].forEach(id=>document.getElementById(id).classList.add("hidden"));
+}
+
+function render(){
+  const w = DATA.workshop;
+  document.getElementById("view-title").innerHTML = headline(w.title, w.highlight);
+  document.getElementById("view-lede").textContent = w.intro;
+  if (w.draft) document.getElementById("draft").classList.remove("hidden");
+
+  document.querySelectorAll("[data-booking]").forEach(a=>a.href = DATA.bookingUrl);
+  document.querySelectorAll("[data-services]").forEach(a=>a.href = DATA.servicesUrl);
+  if (w.trainerEmail) { const t = document.getElementById("trainer-link"); t.href = "mailto:" + w.trainerEmail; t.classList.remove("hidden"); }
+
+  if (w.client || w.date) {
+    const el = document.getElementById("client");
+    el.classList.add("on");
+    document.getElementById("client-name").textContent = [w.client ? "Prepared for " + w.client : "", w.date].filter(Boolean).join(", ");
+    if (/^#[0-9a-f]{3,8}$/i.test(w.clientColour)) el.style.setProperty("--client", w.clientColour);
+  }
+
+  // Try these three
+  const list = document.getElementById("start-list");
+  const storeKey = "utb-tried-" + w.id;
+  let tried = [];
+  try { tried = JSON.parse(localStorage.getItem(storeKey) || "[]"); } catch(e){ tried = []; }
+  if (DATA.start.length) {
+    list.innerHTML = DATA.start.map((s,i)=>{
+      const c = DATA.cards[s.id]; const done = tried.includes(s.id);
+      return `<li class="try${done?" done":""}">
+        <p class="try-label">${["First","Next","Then"][i]}</p>
+        <p class="try-title"><a href="#card-${esc(s.id)}" data-open="${esc(s.id)}">${esc(c.title)}</a></p>
+        ${s.tip?`<p class="tip">${esc(s.tip)}</p>`:`<p class="tip"></p>`}
+        <label class="tick"><input type="checkbox" data-id="${esc(s.id)}" ${done?"checked":""}> I've tried this</label></li>`;
+    }).join("");
+    const n0 = DATA.start.length;
+    document.getElementById("start-title").textContent = n0 === 3 ? "Try these three this week." : n0 === 1 ? "Try this this week." : "Try these two this week.";
+    const updateProgress = () => {
+      const n = list.querySelectorAll("input:checked").length;
+      document.getElementById("progress").textContent = n===n0 ? "All done. Nicely done." : `${n} of ${n0} done`;
+    };
+    list.querySelectorAll("input").forEach(inp=>inp.addEventListener("change",()=>{
+      inp.closest(".try").classList.toggle("done", inp.checked);
+      const ids = [...list.querySelectorAll("input:checked")].map(i=>i.dataset.id);
+      try { localStorage.setItem(storeKey, JSON.stringify(ids)); } catch(e){}
+      updateProgress();
+    }));
+    updateProgress();
+  } else document.getElementById("start").classList.add("hidden");
+
+  const core = groupByTopic(DATA.core), further = groupByTopic(DATA.further);
+  let html = core.map((g,idx)=>`<section class="topic" id="topic-${esc(g.topic)}">
+      <p class="eyebrow">${String(idx+1).padStart(2,"0")} of ${String(core.length).padStart(2,"0")}</p>
+      <h2 class="topic-title">${esc(topicTitle(g.topic))}.</h2>
+      ${topicIntro(g.topic)?`<p class="topic-intro">${esc(topicIntro(g.topic))}</p>`:""}
+      <div class="cards">${g.cards.map(cardHTML).join("")}</div></section>`).join("");
+  if (further.length) {
+    html += `<details class="further" id="further"><summary>Go further: ${DATA.further.length} more how-tos</summary><div>
+      ${further.map(g=>`<h3 class="sub">${esc(topicTitle(g.topic))}</h3><div class="cards">${g.cards.map(cardHTML).join("")}</div>`).join("")}
+      </div></details>`;
+  }
+  html += `<p class="empty" id="empty" hidden>Nothing matches that search. Try a shorter word.</p>`;
+  document.getElementById("main").innerHTML = html;
+  document.getElementById("topic-nav").innerHTML = core.map(g=>`<li><a href="#topic-${esc(g.topic)}">${esc(topicTitle(g.topic))}</a></li>`).join("")
+    + (further.length ? `<li><a href="#further">Go further</a></li>` : "");
+
+  if (DATA.lastChecked) document.getElementById("checked").textContent = DATA.lastChecked;
+  else document.getElementById("checked-line").classList.add("hidden");
+
+  document.getElementById("search").addEventListener("input", e=>{
+    const q = e.target.value.trim().toLowerCase();
+    let shown = 0;
+    document.querySelectorAll("details.card").forEach(c=>{ const hit = !q || c.dataset.hay.includes(q); c.hidden = !hit; if(hit) shown++; });
+    document.querySelectorAll("section.topic").forEach(s=>{ s.hidden = !!q && !s.querySelector("details.card:not([hidden])"); });
+    const fur = document.getElementById("further");
+    if (fur) {
+      if (q) fur.open = true;
+      fur.querySelectorAll("h3.sub").forEach(h=>{ h.hidden = !!q && !h.nextElementSibling.querySelector("details.card:not([hidden])"); });
+      fur.hidden = !!q && !fur.querySelector("details.card:not([hidden])");
+    }
+    document.getElementById("empty").hidden = shown > 0;
+  });
+}
+
+// In-page links: scroll and open, without leaving the page
+document.addEventListener("click", e=>{
+  const a = e.target.closest('a[href^="#"]');
+  if (!a || a.hasAttribute("data-booking") || a.hasAttribute("data-services")) return;
+  const target = document.getElementById(a.getAttribute("href").slice(1));
+  if (!target) return;
+  e.preventDefault();
+  const fur = target.closest(".further"); if (fur) fur.open = true;
+  if (target.id === "further") target.open = true;
+  if (target.tagName === "DETAILS") target.open = true;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  target.scrollIntoView({behavior: reduce ? "auto" : "smooth", block: "start"});
+});
+
+// Copy prompt buttons
+document.addEventListener("click", async e => {
+  const b = e.target.closest(".prompt .copy"); if (!b) return;
+  const text = b.parentElement.querySelector("pre").textContent;
+  let ok = false;
+  try { await navigator.clipboard.writeText(text); ok = true; } catch(err) {
+    const ta = document.createElement("textarea"); ta.value = text; ta.setAttribute("readonly",""); ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select(); try { ok = document.execCommand("copy"); } catch(e2) {} ta.remove();
+  }
+  b.textContent = ok ? "Copied" : "Select and copy the text above"; b.classList.toggle("done", ok);
+  setTimeout(() => { b.textContent = "Copy prompt"; b.classList.remove("done"); }, 2200);
+});
+
+if (DATA) render(); else notFound();
+</script>
+</body>
+</html>
