@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gmail Deep Dive | Sutherland | Using Technology Better</title>
+<meta name="description" content="Resources from your Gmail Deep Dive session: filters, templates, Priority Inbox, Snooze, delegation and more.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FBFBFD; --tile:#FFFFFF; --soft:#F5F5F7; --ink:#0D2137; --body-ink:#2D3F56; --muted:#5A6B80;
+  --line:#E8EAF0; --cyan:#00C8DC; --link:#00808D; --on-cyan:#0D2137; --band:#0D2137; --band-ink:#FBFBFD;
+  --t1:oklch(0.97 0.02 25); --t1-line:#F3CFCB; --t1-ink:#B4413A;
+  --t2:oklch(0.97 0.025 210); --t2-line:#A9E6EE; --t2-ink:#0E7C86;
+  --t3:oklch(0.97 0.03 150); --t3-line:#B9E6C6; --t3-ink:#2F7D45;
+  --font:"Poppins", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1A2C; --tile:#12263D; --soft:#16304B; --ink:#EEF3F8; --body-ink:#C9D4E0; --muted:#94A6BA;
+    --line:#223B57; --link:#4FDDEB; --band:#060F1A;
+    --t1:#2A1E26; --t1-line:#553440; --t1-ink:#F2A49C;
+    --t2:#0F2C38; --t2-line:#1D5664; --t2-ink:#6FE3EF;
+    --t3:#132C23; --t3-line:#28553F; --t3-ink:#86D9A0;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1A2C; --tile:#12263D; --soft:#16304B; --ink:#EEF3F8; --body-ink:#C9D4E0; --muted:#94A6BA;
+  --line:#223B57; --link:#4FDDEB; --band:#060F1A;
+  --t1:#2A1E26; --t1-line:#553440; --t1-ink:#F2A49C;
+  --t2:#0F2C38; --t2-line:#1D5664; --t2-ink:#6FE3EF;
+  --t3:#132C23; --t3-line:#28553F; --t3-ink:#86D9A0;
+}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 5rem);scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important}}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.5;letter-spacing:-.01em}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+:focus-visible{outline:3px solid var(--cyan);outline-offset:3px;border-radius:6px}
+
+.preview{background:#060F1A;color:#FBFBFD;font-size:13px}
+.preview .wrap{display:flex;flex-wrap:wrap;gap:.5rem 1.25rem;align-items:center;padding-top:.5rem;padding-bottom:.5rem}
+.preview label{max-width:100%;min-width:0;display:flex;gap:.5rem;align-items:center}
+.preview select{max-width:100%;min-width:0;font:inherit;padding:.3rem .6rem;border-radius:980px;border:0;background:#FBFBFD;color:#0D2137}
+.preview p{margin:0;opacity:.7}
+
+.wrap{max-width:1216px;margin:0 auto;padding-left:clamp(1.25rem,4vw,2rem);padding-right:clamp(1.25rem,4vw,2rem)}
+
+.topbar{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px);margin-top:calc(-1 * env(safe-area-inset-top,0px))}
+.topbar .wrap{display:flex;justify-content:space-between;align-items:center;gap:1rem;min-height:3.75rem}
+.wordmark{display:flex;align-items:center;gap:.6rem;color:var(--ink);font-weight:600;font-size:.95rem;line-height:1.1}
+.wordmark:hover{text-decoration:none}
+.wordmark .ring{width:1.7rem;height:1.7rem;border-radius:50%;border:4px solid var(--ink);box-shadow:inset 0 0 0 3px var(--bg),inset 0 0 0 7px var(--cyan);flex:none}
+.pill{white-space:nowrap;display:inline-flex;align-items:center;gap:.35rem;border-radius:980px;font-weight:500;padding:11px 22px;background:var(--cyan);color:var(--on-cyan)}
+.pill:hover{text-decoration:none;filter:brightness(1.05)}
+.pill.small{font-size:13px;padding:9px 18px;background:var(--ink);color:var(--bg)}
+
+header.hero{padding:clamp(3rem,8vw,6rem) 0 clamp(2.5rem,5vw,4rem);text-align:center}
+.eyebrow-hero{color:var(--t2-ink);font-weight:500;font-size:15px;margin:0 0 1rem}
+.client{display:none;align-items:center;justify-content:center;gap:.5rem;color:var(--muted);font-size:14px;margin:0 0 1.25rem}
+.client.on{display:flex}
+.client .dot{width:.7rem;height:.7rem;border-radius:50%;background:var(--client,var(--cyan))}
+h1{font-weight:600;font-size:clamp(3rem,9vw,5.85rem);line-height:1.04;letter-spacing:-.045em;margin:0 0 1.25rem}
+h1 em, h2 em{font-style:normal;color:var(--cyan)}
+.lede{font-size:clamp(1.15rem,2.2vw,1.5rem);line-height:1.35;letter-spacing:-.01em;color:var(--body-ink);max-width:44rem;margin:0 auto}
+
+/* Try this week: before / approach / after style tiles */
+.start{margin:0 0 clamp(3.5rem,8vw,6rem)}
+.start-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:.5rem 1rem;margin-bottom:1.5rem}
+.eyebrow{font-size:13px;font-weight:500;letter-spacing:.02em;color:var(--muted);margin:0 0 .5rem}
+.start h2{font-weight:600;font-size:clamp(2rem,4vw,2.5rem);letter-spacing:-.02em;line-height:1.1;margin:0}
+.progress{color:var(--muted);font-size:14px}
+.start ol{list-style:none;margin:0;padding:0;display:grid;gap:1rem}
+@media (min-width:760px){.start ol{grid-template-columns:repeat(3,1fr)}}
+.try{border-radius:18px;padding:1.75rem 1.5rem;border:1px solid;display:flex;flex-direction:column;gap:.75rem}
+.try:nth-child(1){background:var(--t1);border-color:var(--t1-line);--tone:var(--t1-ink)}
+.try:nth-child(2){background:var(--t2);border-color:var(--t2-line);--tone:var(--t2-ink)}
+.try:nth-child(3){background:var(--t3);border-color:var(--t3-line);--tone:var(--t3-ink)}
+.try-label{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--tone);margin:0}
+.try-title{font-weight:600;font-size:1.3rem;line-height:1.25;letter-spacing:-.015em;margin:0}
+.try-title a{color:var(--ink)}
+.try p.tip{margin:0;color:var(--body-ink);flex:1}
+.tick{display:flex;align-items:center;gap:.6rem;font-size:14px;font-weight:500;color:var(--ink);cursor:pointer;margin-top:.25rem}
+.tick input{appearance:none;-webkit-appearance:none;margin:0;width:1.6rem;height:1.6rem;border-radius:50%;border:2px solid var(--tone);background:transparent;cursor:pointer;display:grid;place-items:center;flex:none}
+.tick input::after{content:"";width:.4rem;height:.75rem;border:solid var(--bg);border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px);opacity:0}
+.tick input:checked{background:var(--tone)}
+.tick input:checked::after{opacity:1}
+.try.done .try-title a{text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:var(--tone)}
+
+.layout{display:grid;gap:2.5rem;padding-bottom:clamp(3.5rem,8vw,6rem)}
+@media (min-width:900px){.layout{grid-template-columns:15rem 1fr;gap:3.5rem}}
+nav.topics{align-self:start}
+@media (min-width:900px){nav.topics{position:sticky;top:calc(env(safe-area-inset-top,0px) + 5.5rem)}}
+nav.topics ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.5rem}
+@media (min-width:900px){nav.topics ul{flex-direction:column;gap:.1rem}}
+nav.topics a{display:block;color:var(--body-ink);font-size:14px;padding:.4rem .9rem;border-radius:980px;background:var(--tile);border:1px solid var(--line)}
+@media (min-width:900px){nav.topics a{background:none;border:0;padding:.45rem .75rem}}
+nav.topics a:hover{text-decoration:none;color:var(--ink);background:var(--soft)}
+.search{margin-top:1.5rem}
+.search label{display:block;font-size:13px;font-weight:500;color:var(--muted);margin-bottom:.4rem}
+.search input{width:100%;font:inherit;font-size:15px;padding:.6rem 1rem;border-radius:980px;border:1px solid var(--line);background:var(--tile);color:var(--ink)}
+
+main section.topic{margin-bottom:clamp(3rem,6vw,4.5rem)}
+main h2.topic-title{font-weight:600;font-size:clamp(1.85rem,4.2vw,2.5rem);line-height:1.1;letter-spacing:-.03em;margin:0 0 .6rem}
+.topic-intro{color:var(--body-ink);margin:0 0 1.5rem;max-width:40rem;font-size:1.05rem}
+.cards{background:var(--tile);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+details.card + details.card{border-top:1px solid var(--line)}
+details.card summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:1rem;padding:1.35rem 1.5rem;align-items:start}
+details.card summary::-webkit-details-marker{display:none}
+details.card summary:hover{background:var(--soft)}
+.card h3{font-size:1.1rem;font-weight:600;letter-spacing:-.015em;line-height:1.3;margin:0}
+.why{margin:.35rem 0 0;color:var(--body-ink);font-size:.97rem;max-width:44rem}
+.chev{width:2rem;height:2rem;border-radius:50%;background:var(--soft);display:grid;place-items:center;transition:transform .2s}
+.chev svg{width:.8rem;height:.8rem;stroke:var(--ink)}
+details[open] .chev{transform:rotate(180deg);background:var(--cyan)}
+details[open] .chev svg{stroke:var(--on-cyan)}
+.card-body{padding:0 1.5rem 1.6rem;max-width:46rem}
+.card-body ol{margin:0 0 1.1rem;padding-left:1.35rem;color:var(--body-ink)}
+.card-body li{margin-bottom:.4rem;padding-left:.2rem}
+.card-body li::marker{font-weight:600;color:var(--ink)}
+.note{background:var(--t2);border:1px solid var(--t2-line);border-radius:12px;padding:.75rem 1rem;margin:0 0 1.1rem;font-size:.95rem;color:var(--body-ink)}
+.links{display:flex;flex-wrap:wrap;gap:.5rem 1.5rem}
+.links a{font-weight:500;font-size:.97rem}
+
+details.further{margin-top:1rem}
+details.further > summary{cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:.5rem;font-weight:600;font-size:1.1rem;padding:.8rem 1.4rem;border-radius:980px;background:var(--tile);border:1px solid var(--line)}
+details.further > summary::-webkit-details-marker{display:none}
+details.further > summary::after{content:"›";font-size:1.3rem;line-height:1;transition:transform .2s}
+details.further[open] > summary::after{transform:rotate(90deg)}
+details.further > div{padding-top:1.5rem}
+details.further h3.sub{font-size:13px;font-weight:500;letter-spacing:.02em;color:var(--muted);margin:1.75rem 0 .6rem}
+details.further h3.sub:first-child{margin-top:0}
+.empty{padding:1rem 0;color:var(--muted)}
+
+.band{background:var(--band);color:var(--band-ink);padding:clamp(3.5rem,8vw,6rem) 0;text-align:center}
+.band .eyebrow{color:#94A6BA}
+.band h2{font-weight:600;font-size:clamp(2rem,5vw,3rem);line-height:1.1;letter-spacing:-.03em;margin:0 auto 1rem;max-width:40rem}
+.band p{color:#C9D4E0;max-width:36rem;margin:0 auto 2rem;font-size:1.1rem}
+.band .actions{display:flex;flex-wrap:wrap;justify-content:center;gap:1rem 1.5rem;align-items:center}
+.band a.text{color:var(--cyan);font-size:1.05rem}
+
+footer{padding:2.5rem 0 3rem;color:var(--muted);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem}
+footer p{margin:.2rem 0}
+footer strong{color:var(--ink);font-weight:600}
+
+@media print{
+  .preview,.topbar,nav.topics,.search,.chev,.band{display:none!important}
+  details.card .card-body, details.further > div{display:block!important}
+  body{background:#fff;color:#000}
+  .layout{display:block}
+}
+.draft{background:#FFF4DC;color:#5A3E00;font-size:14px;text-align:center;padding:.6rem 1rem}
+.hidden{display:none!important}
+.prompt{position:relative;margin:0 0 1.1rem;background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:1rem 1.1rem 3.2rem}
+.prompt .label{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--t2-ink);margin:0 0 .5rem}
+.prompt pre{margin:0;font-family:var(--font);font-size:.93rem;line-height:1.55;white-space:pre-wrap;word-wrap:break-word;color:var(--body-ink)}
+.prompt .copy{position:absolute;right:.8rem;bottom:.8rem;border:0;cursor:pointer;font:inherit;font-size:13px;font-weight:500;border-radius:980px;padding:7px 16px;background:var(--cyan);color:var(--on-cyan)}
+.prompt .copy.done{background:var(--ink);color:var(--bg)}
+</style>
+</head>
+<body>
+<div class="draft hidden" id="draft">Draft preview. Participants can't see this page until the workshop is set to Live.</div>
+<div class="topbar">
+  <div class="wrap">
+    <a class="wordmark" href="https://usingtechnologybetter.com/" target="_blank" rel="noopener"><span class="ring" aria-hidden="true"></span>Using Technology Better</a>
+    <a class="pill small" href="#" data-booking target="_blank" rel="noopener">Book a follow-up ›</a>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <p class="eyebrow-hero">Workshop resources</p>
+    <p class="client" id="client"><span class="dot"></span><span id="client-name"></span></p>
+    <h1 id="view-title"></h1>
+    <p class="lede" id="view-lede"></p>
+  </header>
+
+  <section class="start" id="start" aria-labelledby="start-title">
+    <div class="start-head">
+      <div><p class="eyebrow">Start here</p><h2 id="start-title">Try these three this week.</h2></div>
+      <span class="progress" id="progress" aria-live="polite"></span>
+    </div>
+    <ol id="start-list"></ol>
+  </section>
+
+  <div class="layout" id="main-layout">
+    <nav class="topics" aria-label="Topics">
+      <p class="eyebrow">On this page</p>
+      <ul id="topic-nav"></ul>
+      <div class="search" id="search-wrap">
+        <label for="search">Search these resources</label>
+        <input id="search" type="search" placeholder="e.g. filters, templates, snooze">
+      </div>
+    </nav>
+    <main id="main"></main>
+  </div>
+</div>
+
+<section class="band" aria-labelledby="band-title">
+  <div class="wrap">
+    <p class="eyebrow">One last thing</p>
+    <h2 id="band-title">Want to go further with <em>your whole team?</em></h2>
+    <p>We run follow-up sessions, drop-in clinics and workflow reviews. Thirty minutes on a call is enough to work out what would help most.</p>
+    <div class="actions">
+      <a class="pill" href="#" data-booking target="_blank" rel="noopener">Book a consultation ›</a>
+      <a class="text" href="#" data-services target="_blank" rel="noopener">See how we work ›</a>
+      <a class="text hidden" id="trainer-link" href="#" target="_blank" rel="noopener">Email your trainer ›</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <p><strong>Using Technology Better</strong></p>
+      <p>People first. Then the platform.</p>
+    </div>
+    <div>
+      <p id="checked-line">Every how-to on this page was last checked <span id="checked"></span>.</p>
+      <p>Google Workspace, Gmail and Google Calendar are trademarks of Google LLC.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+const DATA = {"workshop": {"id": "sutherland-gmail-deep-dive", "title": "Gmail Deep Dive", "highlight": "Deep Dive", "intro": "Filters, templates, Priority Inbox and a few ways to make Gmail do the repetitive work. Start with the three below.", "client": "Sutherland", "clientColour": "", "date": "", "trainerEmail": "", "draft": false}, "start": [{"id": "filters", "tip": "Pick one email you get every week, like a newsletter or an automated notification, and build a filter that labels it and skips the inbox. Then run it on the mail already there."}, {"id": "templates", "tip": "Save one reply you type out regularly as a template, and use it at least once this week."}, {"id": "follow-up-system", "tip": "Create Follow Up and Waiting For labels, add them to Priority Inbox, and clear both by Friday."}], "core": ["send-archive", "priority-inbox", "labels", "filters", "follow-up-system", "tasks", "email-to-calendar", "templates", "template-filter", "snooze", "scheduled-send", "nudges", "delegate", "gmail-limits"], "further": ["density", "signature", "label-colours", "cc-out", "shared-inbox"], "cards": {"send-archive": {"id": "send-archive", "topic": "setup", "title": "Reply and file in one click with Send & Archive", "why": "Once you've replied, that email's job is done. This button sends your reply and moves the thread out of your inbox at the same time.", "steps": ["Click the gear icon, then See all settings.", "On the General tab, find Send and Archive.", "Choose Show \"Send & Archive\" button in reply.", "Scroll down and click Save Changes."], "note": "Archived isn't deleted. If someone replies, the whole thread pops back into your inbox.", "links": [{"label": "Read the full post", "url": "https://blog.usingtechnologybetter.com/gmails-send-archive-button-explained/"}, {"label": "Read: Demystifying Gmail’s Archive button", "url": "https://blog.usingtechnologybetter.com/demystifying-gmails-archive-button/"}], "prompt": ""}, "priority-inbox": {"id": "priority-inbox", "topic": "setup", "title": "Customise Priority Inbox sections", "why": "Priority Inbox is the closest Gmail gets to Outlook's Focused Inbox, except you decide what the sections are: Important and unread, Starred, or any label you choose.", "steps": ["Click the gear icon, then See all settings, then the Inbox tab.", "Set Inbox type to Priority Inbox.", "Under Inbox sections, click Options next to each section to change what it shows.", "Click Save Changes."], "note": "Give it a week before you decide. It takes a few days to feel normal.", "links": [{"label": "Watch the video", "url": "https://youtu.be/jGbmse5y7P8"}, {"label": "Read the blog post", "url": "https://blog.usingtechnologybetter.com/customise-gmails-priority-inbox-to-boost-your-efficiency/"}], "prompt": ""}, "labels": {"id": "labels", "topic": "sorting", "title": "How labels work (and why they aren't folders)", "why": "An email can only live in one folder, but it can wear as many labels as it likes. A single email can be labelled both Suppliers and Q3 Planning.", "steps": ["In the left-hand menu, click the + next to Labels to create a new one.", "To nest a label under another, tick Nest label under and pick the parent.", "To label an email, open it and click the Labels icon at the top.", "Click any label in the left-hand menu to see everything with that label."], "note": "Labels sort alphabetically. Start an important one with a number or symbol and it floats to the top of your list.", "links": [{"label": "How labels work", "url": "https://blog.usingtechnologybetter.com/how-do-labels-work-in-gmail/"}, {"label": "Five advanced label tips", "url": "https://blog.usingtechnologybetter.com/five-advanced-tips-for-working-with-gmail-labels/"}, {"label": "Watch a quick label tip", "url": "https://youtu.be/nOixC5mbod8"}], "prompt": ""}, "filters": {"id": "filters", "topic": "sorting", "title": "Use filters to label and file email automatically", "why": "Newsletters, system notifications, the weekly roster. If you can describe it, a filter can file it before you ever see it. And it won't disturb the labels you already have.", "steps": ["In the search bar, click the Show search options icon on the right.", "Fill in what the emails have in common, such as who they're from or words in the subject.", "Click Create filter.", "Tick what should happen, such as Apply the label or Skip the Inbox.", "Tick Also apply filter to matching conversations, then click Create filter."], "note": "Test the search first. If the results look right, the filter will be right too. To edit or delete a filter later, go to the gear icon, See all settings, then Filters and Blocked Addresses. Tidy them every few months, because stale filters quietly misfile mail.", "links": [{"label": "Read the full post", "url": "https://blog.usingtechnologybetter.com/use-gmail-filters-to-auto-label-file-your-emails/"}, {"label": "Read: How to save a Gmail search", "url": "https://blog.usingtechnologybetter.com/how-to-save-a-gmail-search/"}], "prompt": ""}, "follow-up-system": {"id": "follow-up-system", "topic": "workflow", "title": "Set up Follow Up and Waiting For labels", "why": "Two labels and one Priority Inbox section give you an at-a-glance view of what you owe people and what people owe you.", "steps": ["Create two labels, such as 1 Follow Up and 2 Waiting For. The number keeps them at the top of your label list.", "Open the gear icon, then See all settings, then the Inbox tab, and make sure Inbox type is Priority Inbox.", "Under Inbox sections, click Options on a section and choose one of your new labels.", "Label an email when it needs a follow-up, and remove the label when it's done."], "note": "A label that never gets cleared becomes a second inbox. Check these two at the start and end of each day.", "links": [{"label": "Read: Using labels as coloured flags", "url": "https://blog.usingtechnologybetter.com/using-labels-as-coloured-flags-in-gmail/"}], "prompt": ""}, "tasks": {"id": "tasks", "topic": "workflow", "title": "Turn emails into tasks", "why": "Your inbox is a terrible to-do list. Move the action into Tasks and archive the email. The task keeps a link back to it.", "steps": ["With an email open, click the Add to Tasks icon at the top.", "Or open Tasks from the right-hand panel and drag an email into it.", "Add a due date and a note so the task shows up in Google Calendar."], "note": "If a task with a due date isn't showing in Calendar, check that Tasks is ticked under My calendars.", "links": [{"label": "Watch the video", "url": "https://youtu.be/Jewq359Agj8"}], "prompt": ""}, "email-to-calendar": {"id": "email-to-calendar", "topic": "workflow", "title": "Turn an email into a calendar event", "why": "Someone emails you a date and a time. Don't retype it. Gmail pre-fills the event from the email.", "steps": ["Open the email and click the calendar button at the top, then choose Create event.", "Check the time, then remove anyone who doesn't need to be in the meeting.", "Click Save.", "Shortcut: drag the email onto the Calendar icon in the right-hand panel."], "links": [{"label": "Read the blog post", "url": "https://blog.usingtechnologybetter.com/four-ways-to-turn-a-gmail-email-into-a-google-calendar-event/"}], "note": "", "prompt": ""}, "templates": {"id": "templates", "topic": "templates", "title": "Save a template for the email you keep retyping", "why": "Asking for agenda items before the weekly meeting, sending the same how-to link, answering the same question. Write it once and insert it in two clicks.", "steps": ["Switch it on: gear icon, See all settings, Advanced tab, then Templates, Enable, Save Changes.", "Draft the email in a new message and remove your signature.", "Click the three dots at the bottom right of the message, then Templates, Save draft as template, and give it a name.", "To use it, start a new email, click the three dots, choose Templates and pick yours under Insert template.", "Add the recipients, check it over and send."], "prompt": "Hi all,\n\nOur weekly meeting is on [day] at [time]. Please reply by [deadline] with anything you'd like on the agenda.\n\nThanks,", "note": "Not seeing Templates under the Advanced tab? Check with your IT team that it's switched on for Sutherland.", "links": []}, "template-filter": {"id": "template-filter", "topic": "templates", "title": "Let a filter send your template for you", "why": "Same question, same answer, every time? Pair a template with a filter and Gmail replies automatically.", "steps": ["Create the template first (see the card above).", "Search for the emails you want to answer, then click the Show search options icon and Create filter.", "Tick Send template and pick your template.", "Click Create filter."], "note": "Test it with a colleague before you rely on it. An auto-reply that fires at the wrong people is hard to explain.", "links": [], "prompt": ""}, "snooze": {"id": "snooze", "topic": "later", "title": "Snooze emails you can't deal with yet", "why": "Some emails aren't urgent, just early. Snooze hides them until the moment they're useful, then puts them back at the top of your inbox. It beats leaving them unread as a reminder.", "steps": ["Hover over an email in your inbox and click the clock icon (or open the email and click Snooze at the top).", "Pick a suggested time, or choose Pick date & time.", "To see everything you've snoozed, click Snoozed in the left-hand menu."], "links": [{"label": "Watch the video", "url": "https://youtu.be/axvw6ozzkHI"}, {"label": "Read the blog post", "url": "https://blog.usingtechnologybetter.com/two-ways-to-snooze-an-email-in-gmail/"}], "note": "", "prompt": ""}, "scheduled-send": {"id": "scheduled-send", "topic": "later", "title": "Write it now, send it at the right time", "why": "Write the email when you've got a minute, and let it land at 8:30 on Monday instead of 10pm on Friday.", "steps": ["Write your email as usual.", "Click the arrow next to Send, then choose Schedule send.", "Pick a suggested time, or choose Pick date & time.", "To change or cancel it, click Scheduled in the left-hand menu."], "links": [{"label": "Read the blog post", "url": "https://blog.usingtechnologybetter.com/how-to-schedule-an-email-in-gmail/"}], "note": "", "prompt": ""}, "nudges": {"id": "nudges", "topic": "later", "title": "Use Nudges (and Mute) instead of ignoring them", "why": "Gmail will remind you about emails you haven't replied to, and ones you sent that haven't had an answer. Those prompts are free follow-ups, so act on them rather than dismissing them on autopilot.", "steps": ["Click the gear icon, then See all settings, and stay on the General tab.", "Find Nudges and tick the options to suggest emails to reply to and to follow up on.", "Click Save Changes.", "For a CC thread you're done with, open it, click the three dots and choose Mute."], "note": "Muted conversations skip your inbox but you can still find them by searching.", "links": [], "prompt": ""}, "delegate": {"id": "delegate", "topic": "share-load", "title": "Let someone manage your email with delegation", "why": "An assistant or colleague can read, send and delete email on your behalf, without you handing over your password.", "steps": ["Click the gear icon, then See all settings, then the Accounts and Import tab.", "Under Grant access to your account, click Add another account.", "Type their email address and click Next Step, then Send email to grant access.", "Once they accept, they can switch to your inbox from their profile picture."], "note": "Your Google Workspace admin needs to have delegation switched on. If you can't see the option, ask them. A delegate can't change your password or settings, or chat on your behalf, and sent mail may show \"on behalf of\".", "links": [{"label": "Watch the video", "url": "https://youtu.be/J5-E02ySc0Q"}], "prompt": ""}, "gmail-limits": {"id": "gmail-limits", "topic": "share-load", "title": "What Gmail can't do: recall and tracking", "why": "If you're coming from Outlook, set your expectations early. Gmail has no true recall, and no built-in open or click tracking.", "steps": ["Switch on Undo Send: gear icon, See all settings, General tab, Undo Send, then pick the longest cancellation period.", "Click Save Changes. Undo Send is your only safety net once you've hit Send.", "For read receipts, look for Request read receipt in the three dots at the bottom of a new message. It only appears if your admin has switched it on.", "For open and click tracking, you'd need a third-party tool. Check with your IT team before you install one."], "note": "Even where read receipts are available, the recipient can usually decline them. Treat a missing receipt as \"unknown\", not \"unread\".", "links": [], "prompt": ""}, "density": {"id": "density", "topic": "setup", "title": "Fit more (or less) on screen with display density", "why": "Compact shows more emails at once. Comfortable gives each one a bit more breathing room. Pick whichever your eyes prefer.", "steps": ["Click the gear icon to open Quick settings.", "Under Density, choose Default, Comfortable or Compact."], "links": [{"label": "Open the guide", "url": "https://drive.google.com/open?id=1xnpUjTxzhDz5vlJQuzpBnOIV72FbhlzX"}], "note": "", "prompt": ""}, "signature": {"id": "signature", "topic": "setup", "title": "Add or edit your email signature", "why": "Set it once and stop typing your phone number at the bottom of every reply.", "steps": ["Click the gear icon, then See all settings.", "On the General tab, scroll to Signature and click Create new.", "Type your signature, then choose when to use it under Signature defaults.", "Click Save Changes."], "links": [{"label": "Open the guide", "url": "https://drive.google.com/open?id=185IaWzlMFgvPVKGzrjOYdSSl9vcl4AUw"}, {"label": "Read: Create multiple signatures in Gmail", "url": "https://blog.usingtechnologybetter.com/create-multiple-signatures-gmail/"}], "note": "", "prompt": ""}, "label-colours": {"id": "label-colours", "topic": "sorting", "title": "Use coloured labels as flags", "why": "A red Action label and an amber Waiting on label tell you the state of your inbox at a glance, without opening a thing.", "steps": ["In the left-hand menu, hover over a label and click the three dots.", "Choose Label colour and pick a colour.", "Keep it to a few colours with a clear meaning each, or it turns into confetti."], "links": [{"label": "Watch the video", "url": "https://youtu.be/MhHBMb1Yu-E"}], "note": "", "prompt": ""}, "cc-out": {"id": "cc-out", "topic": "sorting", "title": "Get CC'd emails out of your inbox", "why": "If you're only on CC, it's usually for your information, not your action. Give those emails their own home so the inbox holds what needs you.", "steps": ["In the Gmail search bar, type cc:me and press Enter to check what comes up.", "Click the Show search options icon, then Create filter.", "Tick Skip the Inbox and Apply the label, then create a label called CC.", "Click Create filter. Check the CC label once or twice a day."], "links": [{"label": "Read the full post", "url": "https://blog.usingtechnologybetter.com/how-to-get-cc-emails-out-of-your-inbox-in-gmail/"}], "note": "", "prompt": ""}, "shared-inbox": {"id": "shared-inbox", "topic": "share-load", "title": "Use a Google Group when it's a team inbox", "why": "Delegation gives one person access to another person's mailbox. For a mailbox a whole team works from, a Google Group with Collaborative Inbox is usually the better fit.", "steps": ["Ask your Workspace admin or the group owner whether a Google Group with Collaborative Inbox is available for your team.", "Team members then work from the group in Google Groups, where they can assign and track conversations."], "note": "Setup is an admin job, so check with your IT team first.", "links": [], "prompt": ""}}, "topics": {"setup": {"title": "Set Gmail up your way", "intro": "Two settings that save a click on every email, and a layout that puts the important mail first."}, "sorting": {"title": "Let Gmail do the sorting", "intro": "Tell Gmail the rules once and let it get on with it. Filters are Gmail's version of Outlook Rules."}, "workflow": {"title": "Build an email workflow", "intro": "Your inbox is a terrible to-do list. Give every email a next step, and move the action out of the inbox."}, "templates": {"title": "Stop retyping the same email", "intro": "Outlook's Quick Parts, Gmail style. Write it once, reuse it forever, or have Gmail send it for you."}, "later": {"title": "Deal with it later, on purpose", "intro": "Not every email needs you right now. Choose when it shows up, and when it goes out."}, "share-load": {"title": "Share the load, and know the limits", "intro": "Delegation for the emails that need a second pair of hands, and a straight answer on what Gmail won't do."}}, "lastChecked": "October 2026", "bookingUrl": "https://usingtechnologybetter.com/", "servicesUrl": "https://usingtechnologybetter.com/"};
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
+
+function headline(title, highlight){
+  let t = String(title).trim();
+  if (!/[.!?]$/.test(t)) t += ".";
+  const h = String(highlight || "").trim();
+  const i = h ? t.toLowerCase().lastIndexOf(h.toLowerCase()) : -1;
+  if (i < 0) return esc(t);
+  let end = i + h.length;
+  if (t.slice(end) === ".") end += 1;           // keep the full stop inside the highlight
+  return esc(t.slice(0, i)) + "<em>" + esc(t.slice(i, end)) + "</em>" + esc(t.slice(end));
+}
+
+function cardHTML(c){
+  const steps = c.steps && c.steps.length ? `<ol>${c.steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol>` : "";
+  const note = c.note ? `<p class="note">${esc(c.note)}</p>` : "";
+  const prompt = c.prompt ? `<div class="prompt"><p class="label">Prompt to copy</p><pre>${esc(c.prompt)}</pre><button class="copy" type="button">Copy prompt</button></div>` : "";
+  const links = (c.links||[]).length ? `<div class="links">${c.links.map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ›</a>`).join("")}</div>` : "";
+  const hay = (c.title+" "+c.why+" "+(c.steps||[]).join(" ")+" "+(c.prompt||"")).toLowerCase();
+  return `<details class="card" id="card-${esc(c.id)}" data-hay="${esc(hay)}">
+    <summary><div><h3>${esc(c.title)}</h3>${c.why?`<p class="why">${esc(c.why)}</p>`:""}</div>
+    <span class="chev"><svg viewBox="0 0 12 12" fill="none" stroke-width="2"><path d="M2 4l4 4 4-4"/></svg></span></summary>
+    <div class="card-body">${steps}${prompt}${note}${links}</div></details>`;
+}
+
+function groupByTopic(ids){
+  const groups = [];
+  ids.forEach(id=>{
+    const c = DATA.cards[id]; if(!c) return;
+    let g = groups.find(g=>g.topic===c.topic);
+    if(!g){ g={topic:c.topic, cards:[]}; groups.push(g); }
+    g.cards.push(c);
+  });
+  return groups;
+}
+const topicTitle = t => (DATA.topics[t] && DATA.topics[t].title) || "More";
+const topicIntro = t => (DATA.topics[t] && DATA.topics[t].intro) || "";
+
+function notFound(){
+  document.getElementById("view-title").innerHTML = headline("Page not found", "not found");
+  document.getElementById("view-lede").textContent = "Check the link from your session, or ask your trainer to send it again.";
+  ["start","main-layout"].forEach(id=>document.getElementById(id).classList.add("hidden"));
+}
+
+function render(){
+  const w = DATA.workshop;
+  document.getElementById("view-title").innerHTML = headline(w.title, w.highlight);
+  document.getElementById("view-lede").textContent = w.intro;
+  if (w.draft) document.getElementById("draft").classList.remove("hidden");
+
+  document.querySelectorAll("[data-booking]").forEach(a=>a.href = DATA.bookingUrl);
+  document.querySelectorAll("[data-services]").forEach(a=>a.href = DATA.servicesUrl);
+  if (w.trainerEmail) { const t = document.getElementById("trainer-link"); t.href = "mailto:" + w.trainerEmail; t.classList.remove("hidden"); }
+
+  if (w.client || w.date) {
+    const el = document.getElementById("client");
+    el.classList.add("on");
+    document.getElementById("client-name").textContent = [w.client ? "Prepared for " + w.client : "", w.date].filter(Boolean).join(", ");
+    if (/^#[0-9a-f]{3,8}$/i.test(w.clientColour)) el.style.setProperty("--client", w.clientColour);
+  }
+
+  // Try these three
+  const list = document.getElementById("start-list");
+  const storeKey = "utb-tried-" + w.id;
+  let tried = [];
+  try { tried = JSON.parse(localStorage.getItem(storeKey) || "[]"); } catch(e){ tried = []; }
+  if (DATA.start.length) {
+    list.innerHTML = DATA.start.map((s,i)=>{
+      const c = DATA.cards[s.id]; const done = tried.includes(s.id);
+      return `<li class="try${done?" done":""}">
+        <p class="try-label">${["First","Next","Then"][i]}</p>
+        <p class="try-title"><a href="#card-${esc(s.id)}" data-open="${esc(s.id)}">${esc(c.title)}</a></p>
+        ${s.tip?`<p class="tip">${esc(s.tip)}</p>`:`<p class="tip"></p>`}
+        <label class="tick"><input type="checkbox" data-id="${esc(s.id)}" ${done?"checked":""}> I've tried this</label></li>`;
+    }).join("");
+    const n0 = DATA.start.length;
+    document.getElementById("start-title").textContent = n0 === 3 ? "Try these three this week." : n0 === 1 ? "Try this this week." : "Try these two this week.";
+    const updateProgress = () => {
+      const n = list.querySelectorAll("input:checked").length;
+      document.getElementById("progress").textContent = n===n0 ? "All done. Nicely done." : `${n} of ${n0} done`;
+    };
+    list.querySelectorAll("input").forEach(inp=>inp.addEventListener("change",()=>{
+      inp.closest(".try").classList.toggle("done", inp.checked);
+      const ids = [...list.querySelectorAll("input:checked")].map(i=>i.dataset.id);
+      try { localStorage.setItem(storeKey, JSON.stringify(ids)); } catch(e){}
+      updateProgress();
+    }));
+    updateProgress();
+  } else document.getElementById("start").classList.add("hidden");
+
+  const core = groupByTopic(DATA.core), further = groupByTopic(DATA.further);
+  let html = core.map((g,idx)=>`<section class="topic" id="topic-${esc(g.topic)}">
+      <p class="eyebrow">${String(idx+1).padStart(2,"0")} of ${String(core.length).padStart(2,"0")}</p>
+      <h2 class="topic-title">${esc(topicTitle(g.topic))}.</h2>
+      ${topicIntro(g.topic)?`<p class="topic-intro">${esc(topicIntro(g.topic))}</p>`:""}
+      <div class="cards">${g.cards.map(cardHTML).join("")}</div></section>`).join("");
+  if (further.length) {
+    html += `<details class="further" id="further"><summary>Go further: ${DATA.further.length} more how-tos</summary><div>
+      ${further.map(g=>`<h3 class="sub">${esc(topicTitle(g.topic))}</h3><div class="cards">${g.cards.map(cardHTML).join("")}</div>`).join("")}
+      </div></details>`;
+  }
+  html += `<p class="empty" id="empty" hidden>Nothing matches that search. Try a shorter word.</p>`;
+  document.getElementById("main").innerHTML = html;
+  document.getElementById("topic-nav").innerHTML = core.map(g=>`<li><a href="#topic-${esc(g.topic)}">${esc(topicTitle(g.topic))}</a></li>`).join("")
+    + (further.length ? `<li><a href="#further">Go further</a></li>` : "");
+
+  if (DATA.lastChecked) document.getElementById("checked").textContent = DATA.lastChecked;
+  else document.getElementById("checked-line").classList.add("hidden");
+
+  document.getElementById("search").addEventListener("input", e=>{
+    const q = e.target.value.trim().toLowerCase();
+    let shown = 0;
+    document.querySelectorAll("details.card").forEach(c=>{ const hit = !q || c.dataset.hay.includes(q); c.hidden = !hit; if(hit) shown++; });
+    document.querySelectorAll("section.topic").forEach(s=>{ s.hidden = !!q && !s.querySelector("details.card:not([hidden])"); });
+    const fur = document.getElementById("further");
+    if (fur) {
+      if (q) fur.open = true;
+      fur.querySelectorAll("h3.sub").forEach(h=>{ h.hidden = !!q && !h.nextElementSibling.querySelector("details.card:not([hidden])"); });
+      fur.hidden = !!q && !fur.querySelector("details.card:not([hidden])");
+    }
+    document.getElementById("empty").hidden = shown > 0;
+  });
+}
+
+// In-page links: scroll and open, without leaving the page
+document.addEventListener("click", e=>{
+  const a = e.target.closest('a[href^="#"]');
+  if (!a || a.hasAttribute("data-booking") || a.hasAttribute("data-services")) return;
+  const target = document.getElementById(a.getAttribute("href").slice(1));
+  if (!target) return;
+  e.preventDefault();
+  const fur = target.closest(".further"); if (fur) fur.open = true;
+  if (target.id === "further") target.open = true;
+  if (target.tagName === "DETAILS") target.open = true;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  target.scrollIntoView({behavior: reduce ? "auto" : "smooth", block: "start"});
+});
+
+// Copy prompt buttons
+document.addEventListener("click", async e => {
+  const b = e.target.closest(".prompt .copy"); if (!b) return;
+  const text = b.parentElement.querySelector("pre").textContent;
+  let ok = false;
+  try { await navigator.clipboard.writeText(text); ok = true; } catch(err) {
+    const ta = document.createElement("textarea"); ta.value = text; ta.setAttribute("readonly",""); ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select(); try { ok = document.execCommand("copy"); } catch(e2) {} ta.remove();
+  }
+  b.textContent = ok ? "Copied" : "Select and copy the text above"; b.classList.toggle("done", ok);
+  setTimeout(() => { b.textContent = "Copy prompt"; b.classList.remove("done"); }, 2200);
+});
+
+if (DATA) render(); else notFound();
+</script>
+</body>
+</html>
